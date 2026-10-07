@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog verilator yosys gcc-riscv64-unknown-elf
+          pip install "cocotb>=2.0,<3" pytest
+      - name: Lint
+        run: make lint
+      - name: Host program tests
+        run: make host-test
+      - name: System test (firmware on the RTL over the UART)
+        run: make sim
+      - name: Resource estimate
+        run: make synth
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports
+          path: |
+            tb/coverage.txt
+            tb/speedup.txt
+            tb/results.xml
+            build/synth/estimate.md
+            build/firmware.elf
+
+  formal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: YosysHQ/setup-oss-cad-suite@v3
+      - name: Formal (SymbiYosys + yices)
+        run: make formal
