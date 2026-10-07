@@ -1,0 +1,26 @@
+# sync_fifo: unbounded proofs (k-induction) of data integrity for every
+# word, flag/count consistency and no overflow; covers a full FIFO drained.
+[tasks]
+prove_d4
+prove_d16
+cover
+
+[options]
+prove_d4:  mode prove
+prove_d16: mode prove
+cover:     mode cover
+depth 24
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -D SYNC_FIFO_DATA_CHECK sync_fifo.sv fifo_formal.sv
+prove_d16: chparam -set DEPTH 16 fifo_formal
+prep -flatten -top fifo_formal
+memory_map
+opt -fast
+
+[files]
+../rtl/sync_fifo.sv
+fifo_formal.sv
