@@ -1,0 +1,13 @@
+build/
+tb/sim_build/
+tb/results.xml
+tb/coverage.txt
+tb/speedup.txt
+__pycache__/
+.pytest_cache/
+formal/fifo_*/
+formal/accel_*/
+*.vcd
+*.fst
+*.jou
+*.log
