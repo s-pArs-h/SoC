@@ -120,10 +120,29 @@ The reused blocks are verified in their own repositories: the core with
 riscv-formal (44/44 checks), riscv-tests and random lockstep simulation;
 the K-means core with cocotb, an exhaustive datapath test and formal proofs.
 
-## Resources
+## Resources and timing
 
-Yosys `synth_xilinx` estimate for Artix-7 (`make synth`); Vivado numbers
-and timing will be added after implementation.
+Vivado 2025.1, xc7a100tcsg324-1, placed and routed with the board
+constraints by `fpga/build.tcl`:
+
+| | Result |
+|---|---|
+| System clock | 50 MHz (MMCM from the 100 MHz board clock) |
+| Worst setup slack | +2.091 ns: all constraints met, about 56 MHz maximum |
+| Worst hold slack | +0.073 ns |
+| LUTs | 2,264 (3.6%), 78 of them as distributed RAM |
+| Flip-flops | 1,737 |
+| Block RAM | 14 tiles (8 RAMB36, 12 RAMB18) |
+| DSP48E1 | 8 |
+
+The critical path (18 logic levels, 77% of the delay in routing) starts at
+the CPU's EX-stage operand register, runs through the ALU's address adder
+and the bus decoder, and ends at the accelerator's centroid register
+enables. It is the cost of the single-cycle bus: the address is computed
+and decoded in the same cycle. Registering the bus request would remove it,
+at one extra cycle per access.
+
+Yosys `synth_xilinx` estimate per block (`make synth`):
 
 | Block | LUTs | FFs | LUTRAM | BRAM36 | DSP48E1 |
 |---|---|---|---|---|---|
