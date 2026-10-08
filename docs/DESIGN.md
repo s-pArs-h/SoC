@@ -172,23 +172,3 @@ step now dominates: Amdahl's law. The options, in increasing cost:
    test convergence itself; the CPU would only start runs.
 3. **Overlap**: double-buffer the centroid registers so the next pass starts
    while the CPU still reads the previous results.
-
-## 10. Questions to be ready for
-
-* Walk through one Lloyd iteration: which block does what, and what crosses
-  the bus?
-* Why does the bus need no wait states? What would you change to add a slow
-  peripheral?
-* Why is reading RXDATA with a side effect safe on this core? When would it
-  not be?
-* Why a local point memory instead of DMA? What does it cost?
-* Explain the streamer's credit check. What breaks without it, and how do
-  you know it is correct?
-* Why can the "starts drained" property not be proven with the same
-  k-induction, and what would make it provable?
-* How does the firmware stay correct after a reset when the RAM is not
-  reloaded?
-* What did the start-up bug teach you about protocol design?
-* The whole run is 53x faster but the assignment step 497x: why, and what
-  would you do next?
-* How does the system test know the answer is right?
